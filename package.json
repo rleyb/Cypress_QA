@@ -1,0 +1,27 @@
+{
+  "name": "cypress_qa",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rleyb/Cypress_QA.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rleyb/Cypress_QA/issues"
+  },
+  "homepage": "https://github.com/rleyb/Cypress_QA#readme",
+  "description": "",
+  "devDependencies": {
+    "cypress": "^14.2.1",
+    "cypress-file-upload": "^5.0.8"
+  },
+  "dependencies": {
+    "cypress-real-events": "^1.14.0"
+  }
+}

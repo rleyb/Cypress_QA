@@ -1,0 +1,7 @@
+{
+    "name": "Andres David de la prueba",
+    "email": "andres@hotmail.com",
+    "subject": "Ejecución de prueba",
+    "message": "Se está ejecutando una prueba automatizada en Cypress",
+    "name_file": "pruebacontactus.txt"
+}

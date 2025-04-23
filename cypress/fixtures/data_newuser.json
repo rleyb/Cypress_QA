@@ -1,0 +1,17 @@
+{
+  "name": "Manuel Alimaña",
+  "email": "pruebaCart17@gmail.com",
+  "password": "123456789",
+  "day": 9,
+  "month": "January",
+  "year": "2001",
+  "first_name": "Juanito",
+  "last_name": "Alimaña",
+  "company":"vagos y asociados",
+  "address": "street 23",
+  "country": "Israel",
+  "state": "casado",
+  "city":"Mongolia",
+  "zipcode": "201020",
+  "mobile_number": "31265489655"
+}
