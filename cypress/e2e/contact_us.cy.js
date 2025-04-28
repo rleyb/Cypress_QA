@@ -2,45 +2,37 @@
 
 import contactUs from "./Page/contact_us/Contact_us";
 
+/* NOTA IMPORTANTE
+    *Contiene el caso de prueba 6
+    *Asegurarse que el archivo a enviar esta agregado en la carpeta "fixtures".
+*/
 describe('Template Contact Us', () =>{
-
+    //Variable para guardar los datos del mensaje "Contact Us"
     var data;
 
     beforeEach('passes', () =>{
         cy.visit('/');
 
-        //conexion a la data
+        //Conectar a los datos del mensaje contact us
         cy.fixture('././data_contactus')
         .then((dato) =>{
             data = dato
-        })
+        });
     })
 
     it('Test Case 6: Contact Us', ()=>{
-        //verificar load de la pagina
-        cy.loadPagehome(); //comando personalizado
+        //Verificar load page "Home"
+        cy.loadPagehome(); //Command personalizado
 
         //click en contact us en el menú
         contactUs.clickBtnContactUs();
         contactUs.verifyTitleGet();
 
-        //Llenado de datos
-        contactUs.typeInputName(data.name);
-        contactUs.typeInputEmail(data.email);
-        contactUs.typeInputSubject(data.subject);
-        contactUs.typeInputMessage(data.message);
-
-        //cargar el archivo. Indicar el nombre del archivo que se desea subir 
-        // en data_contactus.json. Asegurarse que el archivo esta agregado en la carpeta "fixtures".
-        contactUs.uploadFile(data.name_file);
-
-        //Confirmar el envió de datos
-        contactUs.clickSubmit();
-
+        //Enviar un mensaje de contacto
+        contactUs.sendMessageContactUs(data.name, data.email, data.subject, data.message, data.name_file);
         //verificar envío correcto
         contactUs.verifySuccess();
-
-        //regresar a home desde el botón home en la pagina ContactUs
+        //Regresar al Home
         contactUs.clickHome();
     })
 })

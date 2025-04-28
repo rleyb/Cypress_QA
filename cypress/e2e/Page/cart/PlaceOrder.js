@@ -1,10 +1,17 @@
 class placeOrder {
+
     elements = {
+        //Selector del campo "Name card"
         inputNameCard: 'input[data-qa="name-on-card"]',
+        //Selector del campo de numero de tarjeta
         inputNumberCard: 'input[data-qa="card-number"]',
+        //Selector del campo cvc de la tarjeta
         inputCVC: 'input[data-qa="cvc"]',
+        //Selector del campo mes de la tarjeta
         inputMMExpiration: 'input[data-qa="expiry-month"]',
+        //selector del campo año de expiracion de la tarjeta
         inputYYExpiration: 'input[data-qa="expiry-year"]',
+        //Selector del botón para confirmar pedido
         btnPayOrder: '#submit',
 
         //verificación de exito de compra

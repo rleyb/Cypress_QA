@@ -3,8 +3,12 @@
 import subscription from "./Page/suscription/Subscription";
 import cart from "./Page/cart/Cart";
 
+/* NOTA IMPORTANTE
+    *Contiene los casos de prueba 10 y 11
+    *Modifique de subscripción en el archivo data_subscription.json
+*/
 describe('Template Subscription', () =>{
-
+    //variable para guardar los datos de la subscripción
     var data;
 
     beforeEach('passes', ()=>{
@@ -19,35 +23,24 @@ describe('Template Subscription', () =>{
 
     it('Test Case 10: Subscription', () =>{
         //verificar load del home
-        cy.loadPagehome();
+        cy.loadPagehome(); //Command personalizado
+        cy.scrollDown(data.duration); //Command personalizado
 
-        //sroll al pie de pagina. Indicar la duración del scroll en el archivo data_subscription.json
-        cy.scrollDown(data.duration);
-
-        //suscribirse
         subscription.verifyTitleSubs();
-        //ingresar el email para suscribirse en el archivo data_subscription.json
-        subscription.typeEmailSubs(data.emailSubs);
-        subscription.clickSubscribe();
+        subscription.sendSubscription(data.emailSubs);
         subscription.verifyAlertSuccess();
     })
 
     it('Test Case 11: Subscription in cart', () =>{
         //verificar load del home
-        cy.loadPagehome();
-
-        
-        //click en el carrito en el menu de opciones
+        cy.loadPagehome(); //Command personalizado
+        //Ir al carrito
         cart.clickCart();
-
-        //sroll al pie de pagina. Indicar la duración del scroll en el archivo data_subscription.json
-        cy.scrollDown(2000);
+        cy.scrollDown(data.duration);
 
         //suscribirse
         subscription.verifyTitleSubs();
-        //ingresar el email para suscribirse en el archivo data_subscription.json
-        subscription.typeEmailSubs(data.emailCart);
-        subscription.clickSubscribe();
+        subscription.sendSubscription(data.emailCart);
         subscription.verifyAlertSuccess();
     })
 })

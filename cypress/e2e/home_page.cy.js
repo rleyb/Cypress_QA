@@ -11,7 +11,6 @@ describe('Template Slide Page', ()=>{
     it('Verify Scroll Using "Arrow" Button and Scroll Down Funcionality', ()=>{
         cy.loadPagehome();
         cy.scrollDown(2000);
-
         subscription.verifyTitleSubs();
         homePage.clickScrollUP();
         homePage.verifyTextSite();
