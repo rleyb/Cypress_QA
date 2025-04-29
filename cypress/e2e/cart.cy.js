@@ -7,14 +7,17 @@ import signupPage from './Page/automation_excercise/Register';
 import placeOrder from './Page/cart/PlaceOrder';
 import homePage from './Page/automation_excercise/HomePage';
 
+/* NOTA IMPORTANTE
+    * Contiene los test cases del 12 - 17 y 22 - 24
+    * indicar en el array "idProducts" que productos se van a añadir al carrito, se usará en cada test el mismo array
+*/
 describe('Template Cart', () =>{
-    //*********************************************************************************************** */
-    //indicar el id de los productos que se añadirán al carrito. Será usado de forma general en cada test
-    const idProducts = [1, 2, 1, 5, 4, 3];
-    //******************************************************* */
 
-    //variaables que almacenan los datos traidos de los archivos JSON
+    //Indicar el id de los productos que se añadirán al carrito
+    const idProducts = [1, 2, 1, 5, 4, 3];
+    //Variables que almacenan los datos para cada test
     var datauser, dataDlry, dataCard, datalogin;
+
     beforeEach('passes', () =>{
         cy.visit('/');
 
@@ -45,107 +48,77 @@ describe('Template Cart', () =>{
 
     it('Test Case 12: Add product to Cart', () =>{
 
-        //verificar pagina de inicio
-        cy.loadPagehome();
+        cy.loadPagehome(); //Command personalizado
 
         //ir a productos
         product.clickProducts();
-
-        //Indicar el id de productos que se agregarán al carrito
-        //const idProducts = [1, 2, 1];
-        //Verificar si terminó o no de añadir los productos al carrito. Enviar el metodo hoverProducts
+        //Agregar productos e ir al carrito
         cart.addProductsAndGoToCart(idProducts, 
             (id) => product.hoverProduct(id),
             () => cart.clickViewCart()
         );      
-
-        //verificar que los elementos son visibles
-        // Paso previo: contar cuántas veces se repite cada ID
+        //Verificar los productos en el carrito
         const productCounts = cart.countProductsQuantitie(idProducts);
-        
-        //verificar los elementos para cada producto
         cart.verifyProductsinCart(productCounts);
     });
 
     it('Test Case 13: Verify Quantity Product in cart', () =>{
         
-        var idProduct, quantityProd;
+        //Indicar id de producto y cantidad a aumentar
+        let idProduct = 1, quantityProd = 4;
 
-        //verificar pagina de inicio
-        cy.loadPagehome();
+        cy.loadPagehome(); //Command personalizado 
 
-        //ingresar el id del producto y la cantidad para dar click
-        idProduct = 1;
-        quantityProd = 4;
-
-        //click en cualquier producto. Pasar el ID de cualquier producto
         product.clickViewProduct(idProduct);
-
-        //verificar que se los detalles del producto esten abiertos
         product.verifyDetailProducts();
-
-        //aumentar cantidad. Ingresar la cantidad a aumentar del producto
+        //Aumentar cantidad
         cart.typeQuantity(quantityProd);
 
-        //agregar al carrito
+        //Agregar al carrito desde detalles del producto
         cart.clickAddCartDetailProd();
         cart.clickViewCart();
-
+        //Verificar la cantidad aumentada en el carrito
         cart.verifyQuantityCart(idProduct, quantityProd);
     });
 
     it('Test Case 14: Order During', () =>{
-        //verificar pagina de inicio
-        cy.loadPagehome();
+        
+        cy.loadPagehome(); //Command personalizado
 
-        //añadir los productos al carrito
-        //Indicar el id de productos que se agregarán al carrito
-        //const idProducts = [1, 2, 1];
-        //Verificar si terminó o no de añadir los productos al carrito. Enviar el metodo hoverProducts
+        //Agregar productos al carrito
         cart.addProductsAndGoToCart(idProducts, 
             (id) => product.hoverProduct(id),
-            () => cart.clickCartinMenu() //click en el botón cart del menú
+            () => cart.clickCartinMenu()
         );
 
         //verificar paguina del carrito
         cart.verifyloadPageCart();
-
-        //proceder al pago
         cart.clickProceedCheckout();
 
-        //registrar el nuevo usuario
+        //Registrar el nuevo usuario
         cart.clickLoginRegister();
-
-        //Llenar los datos y crear la cuenta***************************************************
+        //Verificar pagina de registro
         cy.loadPageRegister(); 
-        
-        //Datos para iniciar con el registro de nuevo usuario
+        //Iniciar nuevo registro
         pageLogin.createNewUser(datauser.name, datauser.email);
-    
-        //verificar load de la pagina register
         signupPage.verifyTitlePage();
     
-        //llenado de datos
+        //LLenar datos
         signupPage.fillDataUser( 
-            () => signupPage.clickTitle(), // funcion que indica si es Mr. o Mrs. 
-            // e indicar en "titlePerson" en el archivo data_deliveryaddress.json
-         datauser.password, datauser.day, datauser.month, datauser.year,
+            () => signupPage.clickTitle(), // Funcion que indica valor de Title Mr. o Mrs.
+            datauser.password, datauser.day, datauser.month, datauser.year,
             datauser.first_name, datauser.last_name, datauser.company, datauser.address,
             datauser.country, datauser.state, datauser.city, datauser.zipcode, datauser.mobile_number
         );
-    
-        //click para crear la cuenta
         signupPage.createAccount();
-    
-        //verificar el logueo con luneva cuenta
+        //Verificar el login
         signupPage.verifyLogged(datauser.name);
-        //********************************************************************/
 
-        //ir al carrito para completar la compra
+        //Completar compra
         cart.clickCartinMenu();
         cart.clickProceedCheckout();
 
-        //verificar la dirección
+        //Verificar la dirección de entrega
         var fullname = dataDlry.titlePerson + " " + dataDlry.first_name + " " + dataDlry.last_name;
         var address = dataDlry.address;
         var location = dataDlry.city + " " + dataDlry.state + " " + dataDlry.zipcode;
@@ -153,256 +126,204 @@ describe('Template Cart', () =>{
         var phone = dataDlry.mobile_number;
         cart.verifyAddressDelivery(fullname, address, location, country, phone);
         
-        //verificar el pedido
-        //verificar que los elementos son visibles
-        // Paso previo: contar cuántas veces se repite cada ID
+        //verificar productos en el carrito
         const productCounts = cart.countProductsQuantitie(idProducts);
-        
-        //verificar los elementos para cada producto
         cart.verifyProductsinCart(productCounts);
 
-        //añadir comentario y realizar orden
+        //Commentar pedido
         cart.typeCommentOrder(dataDlry.commentsOrder);
         cart.clickPlaceOrder();
 
-        //LLenado de datos del pago
+        //Completar pago
         placeOrder.fillDataOrder(dataCard.nameCard, dataCard.numberCard, dataCard.cvc,
             dataCard.month, dataCard.year
         );
-        
         placeOrder.clickPayOrder();
-
-        //verificar compra realizada con exito
         placeOrder.VerifyOrderPlaced();
 
-        //eliminar la cuenta
-        cy.deleteAccount(); //accion personalizada
+        cy.deleteAccount(); //Command personalizado.
     });
 
     it('Test Case 15: Order Before', () =>{
-        //verificar pagina de inicio
-        cy.loadPagehome();
+        
+        cy.loadPagehome(); //Command personalizado
 
-        //Creamos el usuario
+        //Crear usuario
         homePage.clickLoginRegister();
-
-        //Llenar los datos y crear la cuenta***************************************************
         cy.loadPageRegister(); 
         
-        //Datos para iniciar con el registro de nuevo usuario
+        //Iniciar nuevo registro
         pageLogin.createNewUser(datauser.name, datauser.email);
-    
-        //verificar load de la pagina register
         signupPage.verifyTitlePage();
     
         //llenado de datos
         signupPage.fillDataUser( 
-            () => signupPage.clickTitle(), // funcion que indica si es Mr. o Mrs. 
-            // e indicar en "titlePerson" en el archivo data_deliveryaddress.json
-         datauser.password, datauser.day, datauser.month, datauser.year,
+            () => signupPage.clickTitle(), // Funcion que indica el valor de Title, Mr. o Mrs.
+            datauser.password, datauser.day, datauser.month, datauser.year,
             datauser.first_name, datauser.last_name, datauser.company, datauser.address,
             datauser.country, datauser.state, datauser.city, datauser.zipcode, datauser.mobile_number
         );
-    
-        //click para crear la cuenta
-        signupPage.createAccount();
-    
-        //verificar el logueo con luneva cuenta
-        signupPage.verifyLogged(datauser.name);
-        //********************************************************************/
-
-        //añadir los productos al carrito
-        //Verificar si terminó o no de añadir los productos al carrito. Enviar el metodo hoverProducts
-        cart.addProductsAndGoToCart(idProducts, 
-            (id) => product.hoverProduct(id),
-            () => cart.clickCartinMenu() //click en el botón cart del menú
-        );
-
-        //verificar paguina del carrito
-        cart.verifyloadPageCart();
-
-        //proceder al pago
-        cart.clickProceedCheckout();
-
-        //verificar la dirección
-        var fullname = dataDlry.titlePerson + " " + dataDlry.first_name + " " + dataDlry.last_name;
-        var address = dataDlry.address;
-        var location = dataDlry.city + " " + dataDlry.state + " " + dataDlry.zipcode;
-        var country = dataDlry.country;
-        var phone = dataDlry.mobile_number;
-        cart.verifyAddressDelivery(fullname, address, location, country, phone);
-        
-        //verificar el pedido
-        //verificar que los elementos son visibles
-        // Paso previo: contar cuántas veces se repite cada ID
-        const productCounts = cart.countProductsQuantitie(idProducts);
-        
-        //verificar los elementos para cada producto
-        cart.verifyProductsinCart(productCounts);
-
-        //añadir comentario y realizar orden
-        cart.typeCommentOrder(dataDlry.commentsOrder);
-        cart.clickPlaceOrder();
-
-        //LLenado de datos del pago
-        placeOrder.fillDataOrder(dataCard.nameCard, dataCard.numberCard, dataCard.cvc,
-            dataCard.month, dataCard.year
-        );
-        
-        placeOrder.clickPayOrder();
-
-        //verificar compra realizada con exito
-        placeOrder.VerifyOrderPlaced();
-
-        //eliminar la cuenta
-        cy.deleteAccount(); //accion personalizada
-    });
-
-    it('Test Case 16: Order Login', () =>{
-        //verificar pagina de inicio
-        cy.loadPagehome();
-
-        //Ir a login/signup
-        homePage.clickLoginRegister();
-
-        //Iniciar sesión con una  cuenta existente***************************************************
-        //verificar que carga la pagina de login
-            pageLogin.verifyLabelLogin();
-        
-            //llenado de datos
-            //asegurarse de ingresar datos: email y contraseña, ya registrados (cargados en data_loginuser.json)
-            pageLogin.typeEmailLogin(datalogin.email);
-            pageLogin.typePasswordLogin(datalogin.password);
-            pageLogin.clickLogin();
-        
-            //verificar el loggueo correcto
-            signupPage.verifyLogged(datalogin.name_user);
-        //********************************************************************/
-
-        //añadir los productos al carrito
-        //Verificar si terminó o no de añadir los productos al carrito. Enviar el metodo hoverProducts
-        cart.addProductsAndGoToCart(idProducts, 
-            (id) => product.hoverProduct(id),
-            () => cart.clickCartinMenu() //click en el botón cart del menú
-        );
-
-        //verificar paguina del carrito
-        cart.verifyloadPageCart();
-
-        //proceder al pago
-        cart.clickProceedCheckout();
-
-        //verificar la dirección
-        var fullname = dataDlry.titlePerson + " " + dataDlry.first_name + " " + dataDlry.last_name;
-        var address = dataDlry.address;
-        var location = dataDlry.city + " " + dataDlry.state + " " + dataDlry.zipcode;
-        var country = dataDlry.country;
-        var phone = dataDlry.mobile_number;
-        cart.verifyAddressDelivery(fullname, address, location, country, phone);
-        
-        //verificar el pedido
-        //verificar que los elementos son visibles
-        // Paso previo: contar cuántas veces se repite cada ID
-        const productCounts = cart.countProductsQuantitie(idProducts);
-        
-        //verificar los elementos para cada producto
-        cart.verifyProductsinCart(productCounts);
-
-        //añadir comentario y realizar orden
-        cart.typeCommentOrder(dataDlry.commentsOrder);
-        cart.clickPlaceOrder();
-
-        //LLenado de datos del pago
-        placeOrder.fillDataOrder(dataCard.nameCard, dataCard.numberCard, dataCard.cvc,
-            dataCard.month, dataCard.year
-        );
-        
-        placeOrder.clickPayOrder();
-
-        //verificar compra realizada con exito
-        placeOrder.VerifyOrderPlaced();
-
-        //eliminar la cuenta
-        cy.deleteAccount(); //accion personalizada
-    });
-    
-    it('Test Case 17: Delete Products Cart', () =>{
-        //Ingresar el id del producto a eliminar
-        var productDelete = 1;
-        //verificar load de homepage
-        cy.loadPagehome();
-
-        //añadir los productos al carrito
-        //Verificar si terminó o no de añadir los productos al carrito. Enviar el metodo hoverProducts
-        cart.addProductsAndGoToCart(idProducts, 
-            (id) => product.hoverProduct(id),
-            () => cart.clickCartinMenu() //click en el botón cart del menú
-        );
-
-        //verificar paguina del carrito
-        cart.verifyloadPageCart();
-
-        //ELIMINAR EL PRODUCTO
-        cart.clickDeleteProduct(productDelete);
-        //verificar producto ya no aparece
-        cart.productNotVisible(productDelete);
-    });
-
-    it('Test Case 22: Add products from Recommended Items', ()=>{
-        //Indicar el id del producto que se va a añadir de los productos recomendados
-        let idProduct = 1;
-        
-        cy.scrollDown(2000); //funcion personalizada
-
-        product.verifyRecomendedTitle();
-
-        //indicar el id del producto a añadir
-        cart.addProdctRcmnded(idProduct);
-        cart.clickViewCart();
-        //Verificar el produto en el carrito
-        cart.productVisible(idProduct);
-        cart.visiblePriceCart(idProduct);
-        //indicar la cantidad que debe tener el producto en el carrito
-        cart.verifyQuantityCart(idProduct, '1');
-    });
-
-    it('Test Case 23: Verify Details in Checkout', ()=>{
-        //verificar pagina de inicio
-        cy.loadPagehome();
-
-        //registrar el nuevo usuario*********************************
-        homePage.clickLoginRegister();
-        cy.loadPageRegister(); 
-        //iniciar con el registro de nuevo usuario
-        pageLogin.createNewUser(datauser.name, datauser.email);
-        signupPage.verifyTitlePage();
-        //llenado de datos
-        signupPage.fillDataUser( 
-            () => signupPage.clickTitle(), // funcion que indica si es Mr. o Mrs. 
-            // e indicar en "titlePerson" en el archivo data_deliveryaddress.json
-         datauser.password, datauser.day, datauser.month, datauser.year,
-            datauser.first_name, datauser.last_name, datauser.company, datauser.address,
-            datauser.country, datauser.state, datauser.city, datauser.zipcode, datauser.mobile_number
-        );
-    
-        //Crear la cuenta
         signupPage.createAccount();
         //verificar el logueo
         signupPage.verifyLogged(datauser.name);
-        //********************************************************************/
+
+        //añadir los productos al carrito
+        cart.addProductsAndGoToCart(idProducts, 
+            (id) => product.hoverProduct(id),
+            () => cart.clickCartinMenu()
+        );
+
+        //verificar carrito y completar pago
+        cart.verifyloadPageCart();
+        cart.clickProceedCheckout();
+
+        //verificar la dirección de entrega
+        var fullname = dataDlry.titlePerson + " " + dataDlry.first_name + " " + dataDlry.last_name;
+        var address = dataDlry.address;
+        var location = dataDlry.city + " " + dataDlry.state + " " + dataDlry.zipcode;
+        var country = dataDlry.country;
+        var phone = dataDlry.mobile_number;
+        cart.verifyAddressDelivery(fullname, address, location, country, phone);
+        
+        //verificar productos en el carrito
+        const productCounts = cart.countProductsQuantitie(idProducts);
+        cart.verifyProductsinCart(productCounts);
+
+        //Comentar pedido
+        cart.typeCommentOrder(dataDlry.commentsOrder);
+        cart.clickPlaceOrder();
+        //Completar pago
+        placeOrder.fillDataOrder(dataCard.nameCard, dataCard.numberCard, dataCard.cvc,
+            dataCard.month, dataCard.year
+        );
+        placeOrder.clickPayOrder();
+        placeOrder.VerifyOrderPlaced();
+
+        cy.deleteAccount(); //Command personalizado
+    });
+
+    it('Test Case 16: Order Login', () =>{
+
+        cy.loadPagehome(); //Command personalizado
+
+        //Iniciar sesión
+        homePage.clickLoginRegister();
+        pageLogin.verifyLabelLogin();
+    
+        //llenado de datos
+        pageLogin.loginUser(datalogin.email,datalogin.password);
+        //verificar el loggueo
+        signupPage.verifyLogged(datalogin.name_user);
 
         //Añadir los productos al carrito
         cart.addProductsAndGoToCart(idProducts, 
             (id) => product.hoverProduct(id),
-            () => cart.clickCartinMenu() //click en el botón cart del menú
+            () => cart.clickCartinMenu() 
         );
-        //verificar paguina del carrito
+
+        //Verificar carrito y proceder al pago
         cart.verifyloadPageCart();
 
-        //proceder al pago
         cart.clickProceedCheckout();
 
         //verificar la dirección de entrega
+        var fullname = dataDlry.titlePerson + " " + dataDlry.first_name + " " + dataDlry.last_name;
+        var address = dataDlry.address;
+        var location = dataDlry.city + " " + dataDlry.state + " " + dataDlry.zipcode;
+        var country = dataDlry.country;
+        var phone = dataDlry.mobile_number;
+        cart.verifyAddressDelivery(fullname, address, location, country, phone);
+        
+        //Verificar productos en el carrito
+        const productCounts = cart.countProductsQuantitie(idProducts);
+        cart.verifyProductsinCart(productCounts);
+
+        //Comentar pedido
+        cart.typeCommentOrder(dataDlry.commentsOrder);
+        cart.clickPlaceOrder();
+
+        //Completar pago
+        placeOrder.fillDataOrder(dataCard.nameCard, dataCard.numberCard, dataCard.cvc,
+            dataCard.month, dataCard.year
+        );
+        placeOrder.clickPayOrder();
+        placeOrder.VerifyOrderPlaced();
+
+        cy.deleteAccount(); //Command personalizado
+    });
+    
+    it('Test Case 17: Delete Products Cart', () =>{
+
+        //Ingresar el id del producto a eliminar
+        let productDelete = 1;
+        
+        cy.loadPagehome();//Command personalizado
+
+        //añadir los productos al carrito
+        cart.addProductsAndGoToCart(idProducts, 
+            (id) => product.hoverProduct(id),
+            () => cart.clickCartinMenu()
+        );
+
+        cart.verifyloadPageCart();
+
+        //ELIMINAR EL PRODUCTO
+        cart.clickDeleteProduct(productDelete);
+        cart.productNotVisible(productDelete);
+    });
+
+    it('Test Case 22: Add products from Recommended Items', ()=>{
+
+        //Indicar el id del producto que se va a añadir de los productos recomendados
+        let idProduct = 1;
+        
+        cy.scrollDown(2000); //Command personalizado
+
+        product.verifyRecomendedTitle();
+
+        cart.addProdctRcmnded(idProduct);
+        cart.clickViewCart();
+
+        //Verificar producto en el carrito
+        cart.productVisible(idProduct);
+        cart.visiblePriceCart(idProduct);
+        //Verificar la cantidad esperada
+        cart.verifyQuantityCart(idProduct, '1');
+    });
+
+    it('Test Case 23: Verify Details in Checkout', ()=>{
+        
+        cy.loadPagehome(); //Command personalizado
+
+        //Registrar nuevo usuario
+        homePage.clickLoginRegister();
+
+        cy.loadPageRegister();
+        pageLogin.createNewUser(datauser.name, datauser.email);
+        signupPage.verifyTitlePage();
+
+        //llenado de datos
+        signupPage.fillDataUser( 
+            () => signupPage.clickTitle(), //Funcion que indica Valor de Title, Mr. o Mrs.
+            datauser.password, datauser.day, datauser.month, datauser.year,
+            datauser.first_name, datauser.last_name, datauser.company, datauser.address,
+            datauser.country, datauser.state, datauser.city, datauser.zipcode, datauser.mobile_number
+        );
+        signupPage.createAccount();
+        //verificar el logueo
+        signupPage.verifyLogged(datauser.name);
+
+        //Añadir los productos al carrito
+        cart.addProductsAndGoToCart(idProducts, 
+            (id) => product.hoverProduct(id),
+            () => cart.clickCartinMenu()
+        );
+
+        //Verificar carrito y completar pago
+        cart.verifyloadPageCart();
+        cart.clickProceedCheckout();
+
+        //Datos de la dirección
         let fullname = dataDlry.titlePerson + " " + dataDlry.first_name + " " + dataDlry.last_name;
         let address = dataDlry.address;
         let location = dataDlry.city + " " + dataDlry.state + " " + dataDlry.zipcode;
@@ -413,13 +334,12 @@ describe('Template Cart', () =>{
         //Verificar dirección de facturación
         cart.verifyAddressBilling(fullname, address, location, country, phone);
 
-        //Eliminar la cuenta
-        cy.deleteAccount(); //accion personalizada
+        cy.deleteAccount(); //Command personalizado
     });
 
     it('Test Case 24: Download invoice after purchaise order', ()=>{
         
-        cy.loadPagehome();
+        cy.loadPagehome(); //command personalizado
 
         //Agregar productos al carrito
         cart.addProductsAndGoToCart(idProducts, 
@@ -429,25 +349,26 @@ describe('Template Cart', () =>{
         cart.verifyloadPageCart();
         cart.clickProceedCheckout();
         
-        //Iniciar sesión
+        //Registrar nuevo usuario
         cart.clickLoginRegister();
         pageLogin.createNewUser(datauser.name, datauser.email);
         signupPage.verifyTitlePage();
     
         //llenado de datos
         signupPage.fillDataUser( 
-            () => signupPage.clickTitle(), // Funcion que indica si es Mr. o Mrs.
-         datauser.password, datauser.day, datauser.month, datauser.year,
+            () => signupPage.clickTitle(), // Funcion que indica valor de Title, Mr. o Mrs.
+            datauser.password, datauser.day, datauser.month, datauser.year,
             datauser.first_name, datauser.last_name, datauser.company, datauser.address,
             datauser.country, datauser.state, datauser.city, datauser.zipcode, datauser.mobile_number
         );
         signupPage.createAccount();
         signupPage.verifyLogged(datauser.name);
 
+        //Verificar carrito y completar pago
         cart.clickCartinMenu();
         cart.clickProceedCheckout();
 
-        //verificar la dirección
+        //verificar la dirección de entrega
         var fullname = dataDlry.titlePerson + " " + dataDlry.first_name + " " + dataDlry.last_name;
         var address = dataDlry.address;
         var location = dataDlry.city + " " + dataDlry.state + " " + dataDlry.zipcode;
@@ -459,7 +380,7 @@ describe('Template Cart', () =>{
         const productCounts = cart.countProductsQuantitie(idProducts);
         cart.verifyProductsinCart(productCounts);
 
-        //añadir comentario y realizar orden
+        //Comentar perdido
         cart.typeCommentOrder(dataDlry.commentsOrder);
         cart.clickPlaceOrder();
 
@@ -475,8 +396,7 @@ describe('Template Cart', () =>{
         cart.clickDwloadInvoice();
         placeOrder.clickContinue();
 
-        //eliminar la cuenta
-        cy.deleteAccount();
+        cy.deleteAccount(); //Command personalizado
 
     });
 })

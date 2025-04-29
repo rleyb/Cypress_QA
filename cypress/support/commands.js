@@ -2,36 +2,41 @@ import signupPage from '../e2e/Page/automation_excercise/Register'
 import homePage from '../e2e/Page/automation_excercise/HomePage'
 import pageLogin from '../e2e/Page/automation_excercise/Login'
 
+//Comando para escribir en un campo
 Cypress.Commands.add('writeData', (selector, dato) => {
     cy.get(selector).clear().type(dato)
 })
 
+//Comando para dar click a un elemento
 Cypress.Commands.add('clickGo', (selector) => {
     cy.get(selector).click();
 })
 
+//Comando para dar click en elementos de un modal
 Cypress.Commands.add('clickGoModals', (selector) => {
     cy.get(selector)
     .filter(':visible')
     .realClick();
 })
 
+//Comando para hacer aserciones
 Cypress.Commands.add('asserts', (selector, message) =>{
     cy.get(selector).should('contain', message)
 })
 
+//Comando para verificar si un elemento es visible
 Cypress.Commands.add('isVisible', (selector) =>{
     cy.get(selector).should('be.visible')
 })
 
-//funcion para eliminar una cuenta
+//Comando para eliminar una cuenta
 Cypress.Commands.add('deleteAccount', ()=>{
     signupPage.clickDelete();
     signupPage.verifyDeleted();
     signupPage.clickContinue();
 })
 
-//funcion para verificar el load de la pagina para loguear
+//Comando para verificar carga de la pagina del login
 Cypress.Commands.add('loadPageLogin', ()=>{
     //verificar carga correcta la pagina home
     homePage.verifyLoadPage();
@@ -41,7 +46,7 @@ Cypress.Commands.add('loadPageLogin', ()=>{
     pageLogin.verifyLabelLogin();
 })
 
-//funcion para verificar el load de la pagina para registrar un nuevo usuario
+//Comando para verificar carga de la pagina del login para registrar usuario
 Cypress.Commands.add('loadPageRegister', ()=>{
     //verificar carga correcta la pagina home
     homePage.verifyLoadPage();
@@ -51,13 +56,13 @@ Cypress.Commands.add('loadPageRegister', ()=>{
     pageLogin.verifyLabelRegister();
 })
 
-//funcion para verificar el load de la pagina home
+//Comando para verificar carga de la pagina principal
 Cypress.Commands.add('loadPagehome', ()=>{
     //verificar carga correcta la pagina home
     homePage.verifyLoadPage();
 })
 
-//Verificar una alerta simple
+//Comando para verificar una alerta
 Cypress.Commands.add('assertAlert', (message) =>{
     cy.contains(message).should('be.visible');
 })
